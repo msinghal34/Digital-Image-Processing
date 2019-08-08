@@ -1,0 +1,739 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>myMainScript</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-10-15"><meta name="DC.source" content="myMainScript.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Face recognition on att_faces using eig</a></li><li><a href="#2">Face recognition on att_faces using SVD</a></li><li><a href="#3">Face recognition on yale Database without adjusting for lighting</a></li><li><a href="#4">Face recognition on yale Database after adjusting for lighting</a></li></ul></div><h2 id="1">Face recognition on att_faces using eig</h2><pre class="codeinput">tic;
+clear;
+clc;
+
+cd(<span class="string">"../data/"</span>);
+dimension = 10304; <span class="comment">% Dimension of images 112*92</span>
+
+numFolders = 32; <span class="comment">% Number of folders to get images from</span>
+mainDir = <span class="string">"att_faces/"</span>; <span class="comment">% Name of main directory</span>
+
+num1 = 6; <span class="comment">% Number of images for training in each directory</span>
+num2 = 4; <span class="comment">% Number of images for testing in each directory</span>
+
+originalImages = zeros(dimension, numFolders*num1); <span class="comment">% Original Images to be stored in a matrix of size dimensions X numFolders*num1</span>
+testingImages = zeros(dimension, numFolders*num2); <span class="comment">% Testing Images to be stored in a matrix of size dimensions X numFolders*num2</span>
+
+<span class="comment">% Reading images</span>
+
+cd(mainDir); <span class="comment">% Change Directory</span>
+<span class="keyword">for</span> i=1:numFolders
+    files = dir(sprintf(<span class="string">"s%d"</span>,i) + <span class="string">"/*.pgm"</span>);
+    <span class="keyword">for</span> j=1:num1
+        img = imread(convertStringsToChars(sprintf(<span class="string">"s%d/"</span>,i) + convertCharsToStrings(files(j).name)));
+        originalImages(:,(i-1)*num1+j) = double(img(:));
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> j=num1+1:num1+num2
+        img = imread(convertStringsToChars(sprintf(<span class="string">"s%d/"</span>,i) + convertCharsToStrings(files(j).name)));
+        testingImages(:,(i-1)*num2+j-num1) = double(img(:));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+cd(<span class="string">".."</span>); <span class="comment">% Change directory back to parent</span>
+
+originalMean = mean(originalImages,2); <span class="comment">% Mean of original images</span>
+originalImages = originalImages-originalMean; <span class="comment">% Mean deducted original images</span>
+L = originalImages'*originalImages; <span class="comment">% Calculation of L matrix</span>
+
+[W,~] = eig(L);
+eigenVectors = originalImages*W; <span class="comment">% Eigenvectors</span>
+
+<span class="comment">% Unit-Normalizing eigen vectors</span>
+<span class="keyword">for</span> i=1:size(eigenVectors,2) <span class="comment">% equivalent to numfolders*(num1)</span>
+    eigenVectors(:,i) = eigenVectors(:,i)./norm(eigenVectors(:,i));
+<span class="keyword">end</span>
+
+k = [1, 2, 3, 5, 10, 15, 20, 30, 50, 75, 100, 150, 170]; <span class="comment">% Values of eigenvectors to consider</span>
+
+<span class="comment">%Testing Phase</span>
+answer = zeros(size(k)); <span class="comment">% Vector to store correct number of guesses for each value of k</span>
+testingImages = testingImages - originalMean; <span class="comment">% Subtract originalMean from testing Images</span>
+<span class="keyword">for</span> l=1:size(k,2)
+
+    keigenvectors = eigenVectors(:,192-k(l)+1:192); <span class="comment">% k eigen vectors corresponding to k maximum eigenvalues</span>
+    originalImgCoeffs = keigenvectors'*originalImages; <span class="comment">% Linear Cofficients for original Images</span>
+    testingImgCoeffs = keigenvectors'*testingImages; <span class="comment">% Linear Cofficients for all testing Images</span>
+
+    <span class="keyword">for</span> i=1:size(testingImgCoeffs,2)
+        squaredDiff = (originalImgCoeffs-testingImgCoeffs(:,i)).^2; <span class="comment">% Squared difference between linear coefficients</span>
+        [value, index] = min(sum(squaredDiff)); <span class="comment">% Minimum Squared Difference</span>
+
+        <span class="keyword">if</span> (ceil(index/6) == ceil(i/4)) <span class="comment">% Should be identified as Person ceil(i/4)</span>
+            answer(l) = answer(l) + 1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+recognitionRate = (answer./(numFolders*num2)).*100;
+
+<span class="comment">% Plotting the results</span>
+figure(<span class="string">"Name"</span>, <span class="string">"Q1(i)(a) Recognition Rate vs K using eig on att_faces"</span>);
+plot(k, recognitionRate, <span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2);
+xlabel(<span class="string">'K'</span>);
+ylabel(<span class="string">'Recognition Rate (%)'</span>);
+title(<span class="string">'Recognition Rate vs K'</span>);
+
+cd(<span class="string">"../code/"</span>);
+toc;
+</pre><pre class="codeoutput">Elapsed time is 1.049440 seconds.
+</pre><img vspace="5" hspace="5" src="myMainScript_01.png" alt=""> <h2 id="2">Face recognition on att_faces using SVD</h2><pre class="codeinput">tic;
+clear;
+clc;
+
+cd(<span class="string">"../data/"</span>);
+dimension = 10304; <span class="comment">% Dimension of images 112*92</span>
+
+numFolders = 32; <span class="comment">% Number of folders to get images from</span>
+mainDir = <span class="string">"att_faces/"</span>; <span class="comment">% Name of main directory</span>
+
+num1 = 6; <span class="comment">% Number of images for training in each directory</span>
+num2 = 4; <span class="comment">% Number of images for testing in each directory</span>
+
+originalImages = zeros(dimension, numFolders*num1); <span class="comment">% Original Images to be stored in a matrix of size dimensions X numFolders*num1</span>
+testingImages = zeros(dimension, numFolders*num2); <span class="comment">% Testing Images to be stored in a matrix of size dimensions X numFolders*num2</span>
+
+<span class="comment">% Reading images</span>
+
+cd(mainDir); <span class="comment">% Change Directory</span>
+<span class="keyword">for</span> i=1:numFolders
+    files = dir(sprintf(<span class="string">"s%d"</span>,i) + <span class="string">"/*.pgm"</span>);
+    <span class="keyword">for</span> j=1:num1
+        img = imread(convertStringsToChars(sprintf(<span class="string">"s%d/"</span>,i) + convertCharsToStrings(files(j).name)));
+        originalImages(:,(i-1)*num1+j) = double(img(:));
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> j=num1+1:num1+num2
+        img = imread(convertStringsToChars(sprintf(<span class="string">"s%d/"</span>,i) + convertCharsToStrings(files(j).name)));
+        testingImages(:,(i-1)*num2+j-num1) = double(img(:));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+cd(<span class="string">".."</span>); <span class="comment">% Change directory back to parent</span>
+
+originalMean = mean(originalImages,2); <span class="comment">% Mean of original images</span>
+originalImages = originalImages-originalMean; <span class="comment">% Mean deducted original images</span>
+
+<span class="comment">% Using economical svd</span>
+[U,~,~] = svd(originalImages, <span class="string">'econ'</span>);
+
+eigenVectors = U; <span class="comment">% Eigenvectors</span>
+
+k = [1, 2, 3, 5, 10, 15, 20, 30, 50, 75, 100, 150, 170]; <span class="comment">% Values of eigenvectors to consider</span>
+
+<span class="comment">%Testing Phase</span>
+answer = zeros(size(k)); <span class="comment">% Vector to store correct number of guesses for each value of k</span>
+testingImages = testingImages - originalMean; <span class="comment">% Subtract originalMean from testing Images</span>
+<span class="keyword">for</span> l=1:size(k,2)
+
+    keigenvectors = eigenVectors(:,1:k(l)); <span class="comment">% k eigen vectors corresponding to k maximum eigenvalues</span>
+    originalImgCoeffs = keigenvectors'*originalImages; <span class="comment">% Linear Cofficients for original Images</span>
+    testingImgCoeffs = keigenvectors'*testingImages; <span class="comment">% Linear Cofficients for all testing Images</span>
+
+    <span class="keyword">for</span> i=1:size(testingImgCoeffs,2)
+        squaredDiff = (originalImgCoeffs-testingImgCoeffs(:,i)).^2; <span class="comment">% Squared difference between linear coefficients</span>
+        [value, index] = min(sum(squaredDiff)); <span class="comment">% Minimum Squared Difference</span>
+
+        <span class="keyword">if</span> (ceil(index/6) == ceil(i/4)) <span class="comment">% Should be identified as Person ceil(i/4)</span>
+            answer(l) = answer(l) + 1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+recognitionRate = (answer./(numFolders*num2)).*100;
+
+<span class="comment">% Plotting the results</span>
+figure(<span class="string">"Name"</span>, <span class="string">"Q1(i)(b) Recognition Rate vs K using SVD on att_faces"</span>);
+plot(k, recognitionRate, <span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2);
+xlabel(<span class="string">'K'</span>);
+ylabel(<span class="string">'Recognition Rate (%)'</span>);
+title(<span class="string">'Recognition Rate vs K'</span>);
+
+cd(<span class="string">"../code/"</span>);
+toc;
+</pre><pre class="codeoutput">Elapsed time is 0.739657 seconds.
+</pre><img vspace="5" hspace="5" src="myMainScript_02.png" alt=""> <h2 id="3">Face recognition on yale Database without adjusting for lighting</h2><pre class="codeinput">tic;
+clear;
+clc;
+
+cd(<span class="string">"../data/"</span>);
+
+dimension = 32256; <span class="comment">% Dimension of images 192*168</span>
+
+numFolders = 38; <span class="comment">% Number of folders to get images from</span>
+mainDir = <span class="string">"CroppedYale/"</span>; <span class="comment">% Name of main directory</span>
+identifier = <span class="string">"yaleB"</span>; <span class="comment">% Identifier to identify folders which contain useful images</span>
+
+num1 = 40; <span class="comment">% Number of images for training in each subdirectory</span>
+
+originalImages = zeros(dimension, numFolders*num1); <span class="comment">% Original Images to be stored in a matrix of size dimensions X numFolders*num1</span>
+testingImages = zeros(dimension, 0); <span class="comment">% Testing Images to be stored in testingImages</span>
+
+originalImgName = strings(1,0); <span class="comment">% To be used to store the persons name. ith originalImages has name originalImgName(i)</span>
+testingImgName = strings(1,0); <span class="comment">% To be used to store the persons name. ith testingImages has name testingImgName(i)</span>
+
+<span class="comment">% Reading images</span>
+
+countTestingImages = 0; <span class="comment">% Number of testing images inserted in testingImages so far</span>
+cd(mainDir); <span class="comment">% Change to main Directory</span>
+folders = dir(identifier + <span class="string">"*"</span>); <span class="comment">% Subdirectories</span>
+
+<span class="keyword">for</span> i=1:size(folders,1)
+    cd(folders(i).name); <span class="comment">% Change directory to a subdirectory</span>
+    files = dir(<span class="string">"*.pgm"</span>);
+
+    <span class="comment">% Reading images for training</span>
+    <span class="keyword">for</span> j=1:num1
+        img = imread(files(j).name);
+        originalImages(:,(i-1)*num1+j) = double(img(:));
+        originalImgName((i-1)*num1+j) = folders(i).name;
+    <span class="keyword">end</span>
+
+    <span class="comment">% Reading images for testing</span>
+    <span class="keyword">for</span> j=num1+1:size(files,1)
+        img = imread(files(j).name);
+        countTestingImages = countTestingImages + 1;
+        testingImgName(countTestingImages) = folders(i).name;
+        testingImages(:,countTestingImages) = double(img(:));
+    <span class="keyword">end</span>
+
+    cd(<span class="string">".."</span>); <span class="comment">% Change directory back to main Directory;</span>
+<span class="keyword">end</span>
+
+cd(<span class="string">".."</span>); <span class="comment">% Change directory back to parent</span>
+
+originalMean = mean(originalImages,2); <span class="comment">% Mean of original images</span>
+originalImages = originalImages-originalMean; <span class="comment">% Mean deducted original images</span>
+
+<span class="comment">% Using economical svd</span>
+[U,~,~] = svd(originalImages, <span class="string">'econ'</span>);
+
+eigenVectors = U; <span class="comment">% Take all eigenvectors</span>
+
+k = [1, 2, 3, 5, 10, 15, 20, 30, 50, 60, 65, 75, 100, 200, 300, 500, 1000]; <span class="comment">% Values of eigenvectors to consider</span>
+
+<span class="comment">%Testing Phase</span>
+answer = zeros(size(k)); <span class="comment">% Vector to store correct number of guesses for each value of k</span>
+testingImages = testingImages - originalMean; <span class="comment">% Subtract originalMean from testing Images</span>
+<span class="keyword">for</span> l=1:size(k,2)
+
+    keigenvectors = eigenVectors(:,1:k(l)); <span class="comment">% k eigen vectors corresponding to k maximum eigenvalues</span>
+    originalImgCoeffs = keigenvectors'*originalImages; <span class="comment">% Linear Cofficients for original Images</span>
+    testingImgCoeffs = keigenvectors'*testingImages; <span class="comment">% Linear Cofficients for all testing Images</span>
+
+    <span class="keyword">for</span> i=1:size(testingImgCoeffs,2)
+        squaredDiff = (originalImgCoeffs-testingImgCoeffs(:,i)).^2; <span class="comment">% Squared difference between linear coefficients</span>
+        [value, index] = min(sum(squaredDiff)); <span class="comment">% Minimum Squared Difference</span>
+
+        <span class="keyword">if</span> (originalImgName(index) == testingImgName(i)) <span class="comment">% Name should be same</span>
+            answer(l) = answer(l) + 1;
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+recognitionRate = (answer./countTestingImages).*100;
+
+<span class="comment">% Plotting the results</span>
+figure(<span class="string">"Name"</span>, <span class="string">"Q1(ii)(a) Face recognition on yale Database without adjusting for lighting"</span>);
+plot(k, recognitionRate, <span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2);
+xlabel(<span class="string">'K'</span>);
+ylabel(<span class="string">'Recognition Rate (%)'</span>);
+title(<span class="string">'Recognition Rate vs K'</span>);
+
+cd(<span class="string">"../code/"</span>);
+toc;
+</pre><pre class="codeoutput">Elapsed time is 25.391990 seconds.
+</pre><img vspace="5" hspace="5" src="myMainScript_03.png" alt=""> <h2 id="4">Face recognition on yale Database after adjusting for lighting</h2><pre class="codeinput">tic;
+clear;
+clc;
+
+cd(<span class="string">"../data/"</span>);
+dimension = 32256; <span class="comment">% Dimension of images 192*168</span>
+
+numFolders = 38; <span class="comment">% Number of folders to get images from</span>
+mainDir = <span class="string">"CroppedYale/"</span>; <span class="comment">% Name of main directory</span>
+identifier = <span class="string">"yaleB"</span>; <span class="comment">% Identifier to identify folders which contain useful images</span>
+
+num1 = 40; <span class="comment">% Number of images for training in each subdirectory</span>
+
+originalImages = zeros(dimension, numFolders*num1); <span class="comment">% Original Images to be stored in a matrix of size dimensions X numFolders*num1</span>
+testingImages = zeros(dimension, 0); <span class="comment">% Testing Images to be stored in testingImages</span>
+
+originalImgName = strings(1,0); <span class="comment">% To be used to store the persons name. ith originalImages has name originalImgName(i)</span>
+testingImgName = strings(1,0); <span class="comment">% To be used to store the persons name. ith testingImages has name testingImgName(i)</span>
+
+<span class="comment">% Reading images</span>
+
+countTestingImages = 0; <span class="comment">% Number of testing images inserted in testingImages so far</span>
+cd(mainDir); <span class="comment">% Change to main Directory</span>
+folders = dir(identifier + <span class="string">"*"</span>); <span class="comment">% Subdirectories</span>
+
+<span class="keyword">for</span> i=1:size(folders,1)
+    cd(folders(i).name); <span class="comment">% Change directory to a subdirectory</span>
+    files = dir(<span class="string">"*.pgm"</span>);
+
+    <span class="comment">% Reading images for training</span>
+    <span class="keyword">for</span> j=1:num1
+        img = imread(files(j).name);
+        originalImages(:,(i-1)*num1+j) = double(img(:));
+        originalImgName((i-1)*num1+j) = folders(i).name;
+    <span class="keyword">end</span>
+
+    <span class="comment">% Reading images for testing</span>
+    <span class="keyword">for</span> j=num1+1:size(files,1)
+        img = imread(files(j).name);
+        countTestingImages = countTestingImages + 1;
+        testingImgName(countTestingImages) = folders(i).name;
+        testingImages(:,countTestingImages) = double(img(:));
+    <span class="keyword">end</span>
+
+    cd(<span class="string">".."</span>); <span class="comment">% Change directory back to main Directory;</span>
+<span class="keyword">end</span>
+
+cd(<span class="string">".."</span>); <span class="comment">% Change directory back to parent</span>
+
+originalMean = mean(originalImages,2); <span class="comment">% Mean of original images</span>
+originalImages = originalImages-originalMean; <span class="comment">% Mean deducted original images</span>
+
+<span class="comment">% Using economical svd</span>
+[U,~,~] = svd(originalImages, <span class="string">'econ'</span>);
+
+eigenVectors = U(:,4:end); <span class="comment">% Take all eigenvectors except the three corresponding to max eigenvalues</span>
+
+k = [1, 2, 3, 5, 10, 15, 20, 30, 50, 60, 65, 75, 100, 200, 300, 500, 1000]; <span class="comment">% Values of eigenvectors to consider</span>
+
+<span class="comment">%Testing Phase</span>
+answer = zeros(size(k)); <span class="comment">% Vector to store correct number of guesses for each value of k</span>
+testingImages = testingImages - originalMean; <span class="comment">% Subtract originalMean from testing Images</span>
+<span class="keyword">for</span> l=1:size(k,2)
+
+    keigenvectors = eigenVectors(:,1:k(l)); <span class="comment">% k eigen vectors corresponding to k maximum eigenvalues</span>
+    originalImgCoeffs = keigenvectors'*originalImages; <span class="comment">% Linear Cofficients for original Images</span>
+    testingImgCoeffs = keigenvectors'*testingImages; <span class="comment">% Linear Cofficients for all testing Images</span>
+
+    <span class="keyword">for</span> i=1:size(testingImgCoeffs,2)
+        squaredDiff = (originalImgCoeffs-testingImgCoeffs(:,i)).^2; <span class="comment">% Squared difference between linear coefficients</span>
+        [value, index] = min(sum(squaredDiff)); <span class="comment">% Minimum Squared Difference</span>
+
+        <span class="keyword">if</span> (originalImgName(index) == testingImgName(i)) <span class="comment">% Name should be same</span>
+            answer(l) = answer(l) + 1;
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+recognitionRate = (answer./countTestingImages).*100;
+
+<span class="comment">% Plotting the results</span>
+figure(<span class="string">"Name"</span>, <span class="string">"Q1(ii)(b) Face recognition on yale Database after adjusting for lighting"</span>);
+plot(k, recognitionRate, <span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2);
+xlabel(<span class="string">'K'</span>);
+ylabel(<span class="string">'Recognition Rate (%)'</span>);
+title(<span class="string">'Recognition Rate vs K'</span>);
+
+cd(<span class="string">"../code/"</span>);
+toc;
+</pre><pre class="codeoutput">Elapsed time is 24.080586 seconds.
+</pre><img vspace="5" hspace="5" src="myMainScript_04.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Face recognition on att_faces using eig
+tic;
+clear;
+clc;
+
+cd("../data/");
+dimension = 10304; % Dimension of images 112*92
+
+numFolders = 32; % Number of folders to get images from
+mainDir = "att_faces/"; % Name of main directory
+
+num1 = 6; % Number of images for training in each directory
+num2 = 4; % Number of images for testing in each directory
+
+originalImages = zeros(dimension, numFolders*num1); % Original Images to be stored in a matrix of size dimensions X numFolders*num1
+testingImages = zeros(dimension, numFolders*num2); % Testing Images to be stored in a matrix of size dimensions X numFolders*num2
+
+% Reading images
+
+cd(mainDir); % Change Directory
+for i=1:numFolders
+    files = dir(sprintf("s%d",i) + "/*.pgm");
+    for j=1:num1
+        img = imread(convertStringsToChars(sprintf("s%d/",i) + convertCharsToStrings(files(j).name)));
+        originalImages(:,(i-1)*num1+j) = double(img(:));
+    end
+    for j=num1+1:num1+num2
+        img = imread(convertStringsToChars(sprintf("s%d/",i) + convertCharsToStrings(files(j).name)));
+        testingImages(:,(i-1)*num2+j-num1) = double(img(:));
+    end
+end
+cd(".."); % Change directory back to parent
+
+originalMean = mean(originalImages,2); % Mean of original images
+originalImages = originalImages-originalMean; % Mean deducted original images
+L = originalImages'*originalImages; % Calculation of L matrix
+
+[W,~] = eig(L);
+eigenVectors = originalImages*W; % Eigenvectors
+
+% Unit-Normalizing eigen vectors
+for i=1:size(eigenVectors,2) % equivalent to numfolders*(num1)
+    eigenVectors(:,i) = eigenVectors(:,i)./norm(eigenVectors(:,i));
+end
+
+k = [1, 2, 3, 5, 10, 15, 20, 30, 50, 75, 100, 150, 170]; % Values of eigenvectors to consider
+
+%Testing Phase
+answer = zeros(size(k)); % Vector to store correct number of guesses for each value of k
+testingImages = testingImages - originalMean; % Subtract originalMean from testing Images
+for l=1:size(k,2)
+    
+    keigenvectors = eigenVectors(:,192-k(l)+1:192); % k eigen vectors corresponding to k maximum eigenvalues
+    originalImgCoeffs = keigenvectors'*originalImages; % Linear Cofficients for original Images
+    testingImgCoeffs = keigenvectors'*testingImages; % Linear Cofficients for all testing Images
+    
+    for i=1:size(testingImgCoeffs,2)
+        squaredDiff = (originalImgCoeffs-testingImgCoeffs(:,i)).^2; % Squared difference between linear coefficients
+        [value, index] = min(sum(squaredDiff)); % Minimum Squared Difference
+        
+        if (ceil(index/6) == ceil(i/4)) % Should be identified as Person ceil(i/4)
+            answer(l) = answer(l) + 1;
+        end
+    end
+end
+
+recognitionRate = (answer./(numFolders*num2)).*100;
+
+% Plotting the results
+figure("Name", "Q1(i)(a) Recognition Rate vs K using eig on att_faces");
+plot(k, recognitionRate, 'r', 'LineWidth', 2);
+xlabel('K');
+ylabel('Recognition Rate (%)');
+title('Recognition Rate vs K');
+
+cd("../code/");
+toc;
+%% Face recognition on att_faces using SVD
+tic;
+clear;
+clc;
+
+cd("../data/");
+dimension = 10304; % Dimension of images 112*92
+
+numFolders = 32; % Number of folders to get images from
+mainDir = "att_faces/"; % Name of main directory
+
+num1 = 6; % Number of images for training in each directory
+num2 = 4; % Number of images for testing in each directory
+
+originalImages = zeros(dimension, numFolders*num1); % Original Images to be stored in a matrix of size dimensions X numFolders*num1
+testingImages = zeros(dimension, numFolders*num2); % Testing Images to be stored in a matrix of size dimensions X numFolders*num2
+
+% Reading images
+
+cd(mainDir); % Change Directory
+for i=1:numFolders
+    files = dir(sprintf("s%d",i) + "/*.pgm");
+    for j=1:num1
+        img = imread(convertStringsToChars(sprintf("s%d/",i) + convertCharsToStrings(files(j).name)));
+        originalImages(:,(i-1)*num1+j) = double(img(:));
+    end
+    for j=num1+1:num1+num2
+        img = imread(convertStringsToChars(sprintf("s%d/",i) + convertCharsToStrings(files(j).name)));
+        testingImages(:,(i-1)*num2+j-num1) = double(img(:));
+    end
+end
+cd(".."); % Change directory back to parent
+
+originalMean = mean(originalImages,2); % Mean of original images
+originalImages = originalImages-originalMean; % Mean deducted original images
+
+% Using economical svd
+[U,~,~] = svd(originalImages, 'econ');
+
+eigenVectors = U; % Eigenvectors
+
+k = [1, 2, 3, 5, 10, 15, 20, 30, 50, 75, 100, 150, 170]; % Values of eigenvectors to consider
+
+%Testing Phase
+answer = zeros(size(k)); % Vector to store correct number of guesses for each value of k
+testingImages = testingImages - originalMean; % Subtract originalMean from testing Images
+for l=1:size(k,2)
+    
+    keigenvectors = eigenVectors(:,1:k(l)); % k eigen vectors corresponding to k maximum eigenvalues
+    originalImgCoeffs = keigenvectors'*originalImages; % Linear Cofficients for original Images
+    testingImgCoeffs = keigenvectors'*testingImages; % Linear Cofficients for all testing Images
+    
+    for i=1:size(testingImgCoeffs,2)
+        squaredDiff = (originalImgCoeffs-testingImgCoeffs(:,i)).^2; % Squared difference between linear coefficients
+        [value, index] = min(sum(squaredDiff)); % Minimum Squared Difference
+        
+        if (ceil(index/6) == ceil(i/4)) % Should be identified as Person ceil(i/4)
+            answer(l) = answer(l) + 1;
+        end
+    end
+end
+
+recognitionRate = (answer./(numFolders*num2)).*100;
+
+% Plotting the results
+figure("Name", "Q1(i)(b) Recognition Rate vs K using SVD on att_faces");
+plot(k, recognitionRate, 'r', 'LineWidth', 2);
+xlabel('K');
+ylabel('Recognition Rate (%)');
+title('Recognition Rate vs K');
+
+cd("../code/");
+toc;
+%% Face recognition on yale Database without adjusting for lighting
+tic;
+clear;
+clc;
+
+cd("../data/");
+
+dimension = 32256; % Dimension of images 192*168
+
+numFolders = 38; % Number of folders to get images from
+mainDir = "CroppedYale/"; % Name of main directory
+identifier = "yaleB"; % Identifier to identify folders which contain useful images
+
+num1 = 40; % Number of images for training in each subdirectory
+
+originalImages = zeros(dimension, numFolders*num1); % Original Images to be stored in a matrix of size dimensions X numFolders*num1
+testingImages = zeros(dimension, 0); % Testing Images to be stored in testingImages
+
+originalImgName = strings(1,0); % To be used to store the persons name. ith originalImages has name originalImgName(i)
+testingImgName = strings(1,0); % To be used to store the persons name. ith testingImages has name testingImgName(i)
+
+% Reading images
+
+countTestingImages = 0; % Number of testing images inserted in testingImages so far
+cd(mainDir); % Change to main Directory
+folders = dir(identifier + "*"); % Subdirectories
+
+for i=1:size(folders,1)
+    cd(folders(i).name); % Change directory to a subdirectory
+    files = dir("*.pgm");
+    
+    % Reading images for training
+    for j=1:num1
+        img = imread(files(j).name);
+        originalImages(:,(i-1)*num1+j) = double(img(:));
+        originalImgName((i-1)*num1+j) = folders(i).name;
+    end
+    
+    % Reading images for testing
+    for j=num1+1:size(files,1)
+        img = imread(files(j).name);
+        countTestingImages = countTestingImages + 1;
+        testingImgName(countTestingImages) = folders(i).name;
+        testingImages(:,countTestingImages) = double(img(:));
+    end
+    
+    cd(".."); % Change directory back to main Directory;
+end
+
+cd(".."); % Change directory back to parent
+
+originalMean = mean(originalImages,2); % Mean of original images
+originalImages = originalImages-originalMean; % Mean deducted original images
+
+% Using economical svd
+[U,~,~] = svd(originalImages, 'econ');
+
+eigenVectors = U; % Take all eigenvectors
+
+k = [1, 2, 3, 5, 10, 15, 20, 30, 50, 60, 65, 75, 100, 200, 300, 500, 1000]; % Values of eigenvectors to consider
+
+%Testing Phase
+answer = zeros(size(k)); % Vector to store correct number of guesses for each value of k
+testingImages = testingImages - originalMean; % Subtract originalMean from testing Images
+for l=1:size(k,2)
+    
+    keigenvectors = eigenVectors(:,1:k(l)); % k eigen vectors corresponding to k maximum eigenvalues
+    originalImgCoeffs = keigenvectors'*originalImages; % Linear Cofficients for original Images
+    testingImgCoeffs = keigenvectors'*testingImages; % Linear Cofficients for all testing Images
+    
+    for i=1:size(testingImgCoeffs,2)
+        squaredDiff = (originalImgCoeffs-testingImgCoeffs(:,i)).^2; % Squared difference between linear coefficients
+        [value, index] = min(sum(squaredDiff)); % Minimum Squared Difference
+        
+        if (originalImgName(index) == testingImgName(i)) % Name should be same
+            answer(l) = answer(l) + 1;
+        end
+        
+    end
+end
+
+recognitionRate = (answer./countTestingImages).*100;
+
+% Plotting the results
+figure("Name", "Q1(ii)(a) Face recognition on yale Database without adjusting for lighting");
+plot(k, recognitionRate, 'r', 'LineWidth', 2);
+xlabel('K');
+ylabel('Recognition Rate (%)');
+title('Recognition Rate vs K');
+
+cd("../code/");
+toc;
+%% Face recognition on yale Database after adjusting for lighting
+tic;
+clear;
+clc;
+
+cd("../data/");
+dimension = 32256; % Dimension of images 192*168
+
+numFolders = 38; % Number of folders to get images from
+mainDir = "CroppedYale/"; % Name of main directory
+identifier = "yaleB"; % Identifier to identify folders which contain useful images
+
+num1 = 40; % Number of images for training in each subdirectory
+
+originalImages = zeros(dimension, numFolders*num1); % Original Images to be stored in a matrix of size dimensions X numFolders*num1
+testingImages = zeros(dimension, 0); % Testing Images to be stored in testingImages
+
+originalImgName = strings(1,0); % To be used to store the persons name. ith originalImages has name originalImgName(i)
+testingImgName = strings(1,0); % To be used to store the persons name. ith testingImages has name testingImgName(i)
+
+% Reading images
+
+countTestingImages = 0; % Number of testing images inserted in testingImages so far
+cd(mainDir); % Change to main Directory
+folders = dir(identifier + "*"); % Subdirectories
+
+for i=1:size(folders,1)
+    cd(folders(i).name); % Change directory to a subdirectory
+    files = dir("*.pgm");
+    
+    % Reading images for training
+    for j=1:num1
+        img = imread(files(j).name);
+        originalImages(:,(i-1)*num1+j) = double(img(:));
+        originalImgName((i-1)*num1+j) = folders(i).name;
+    end
+    
+    % Reading images for testing
+    for j=num1+1:size(files,1)
+        img = imread(files(j).name);
+        countTestingImages = countTestingImages + 1;
+        testingImgName(countTestingImages) = folders(i).name;
+        testingImages(:,countTestingImages) = double(img(:));
+    end
+    
+    cd(".."); % Change directory back to main Directory;
+end
+
+cd(".."); % Change directory back to parent
+
+originalMean = mean(originalImages,2); % Mean of original images
+originalImages = originalImages-originalMean; % Mean deducted original images
+
+% Using economical svd
+[U,~,~] = svd(originalImages, 'econ');
+
+eigenVectors = U(:,4:end); % Take all eigenvectors except the three corresponding to max eigenvalues
+
+k = [1, 2, 3, 5, 10, 15, 20, 30, 50, 60, 65, 75, 100, 200, 300, 500, 1000]; % Values of eigenvectors to consider
+
+%Testing Phase
+answer = zeros(size(k)); % Vector to store correct number of guesses for each value of k
+testingImages = testingImages - originalMean; % Subtract originalMean from testing Images
+for l=1:size(k,2)
+    
+    keigenvectors = eigenVectors(:,1:k(l)); % k eigen vectors corresponding to k maximum eigenvalues
+    originalImgCoeffs = keigenvectors'*originalImages; % Linear Cofficients for original Images
+    testingImgCoeffs = keigenvectors'*testingImages; % Linear Cofficients for all testing Images
+    
+    for i=1:size(testingImgCoeffs,2)
+        squaredDiff = (originalImgCoeffs-testingImgCoeffs(:,i)).^2; % Squared difference between linear coefficients
+        [value, index] = min(sum(squaredDiff)); % Minimum Squared Difference
+        
+        if (originalImgName(index) == testingImgName(i)) % Name should be same
+            answer(l) = answer(l) + 1;
+        end
+        
+    end
+end
+
+recognitionRate = (answer./countTestingImages).*100;
+
+% Plotting the results
+figure("Name", "Q1(ii)(b) Face recognition on yale Database after adjusting for lighting");
+plot(k, recognitionRate, 'r', 'LineWidth', 2);
+xlabel('K');
+ylabel('Recognition Rate (%)');
+title('Recognition Rate vs K');
+
+cd("../code/");
+toc;
+
+##### SOURCE END #####
+--></body></html>

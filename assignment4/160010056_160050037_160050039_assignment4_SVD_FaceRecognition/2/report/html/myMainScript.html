@@ -1,0 +1,237 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Face reconstruction of "CroppedYale/yaleB01/yaleB01_P00A+000E+00.pgm"</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-10-15"><meta name="DC.source" content="myMainScript.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Face reconstruction of "CroppedYale/yaleB01/yaleB01_P00A+000E+00.pgm"</h1><pre class="codeinput">tic;
+close <span class="string">all</span>;
+clear;
+clc;
+
+cd(<span class="string">"../data/"</span>);
+dimension = 32256; <span class="comment">% Dimension of images 192*168</span>
+
+numFolders = 38; <span class="comment">% Number of folders to get images from</span>
+mainDir = <span class="string">"CroppedYale/"</span>; <span class="comment">% Name of main directory</span>
+identifier = <span class="string">"yaleB"</span>; <span class="comment">% Identifier to identify folders which contain useful images</span>
+
+images = zeros(dimension, 0); <span class="comment">% All images as column vector of size dimension</span>
+
+<span class="comment">% Reading images</span>
+
+countImages = 0; <span class="comment">% Number of images read so far in images</span>
+cd(mainDir); <span class="comment">% Change to main Directory</span>
+folders = dir(identifier + <span class="string">"*"</span>); <span class="comment">% Subdirectories</span>
+
+<span class="keyword">for</span> i=1:size(folders,1)
+    cd(folders(i).name); <span class="comment">% Change directory to a subdirectory</span>
+    files = dir(<span class="string">"*.pgm"</span>);
+
+    <span class="comment">% Reading images from subdirectory</span>
+    <span class="keyword">for</span> j=1:size(files,1)
+        img = imread(files(j).name);
+        countImages = countImages + 1;
+        images(:,countImages) = double(img(:));
+    <span class="keyword">end</span>
+
+    cd(<span class="string">".."</span>); <span class="comment">% Change directory back to main Directory;</span>
+<span class="keyword">end</span>
+
+cd(<span class="string">".."</span>); <span class="comment">% Change directory back to parent</span>
+
+meanImage = mean(images,2); <span class="comment">% Mean of original images</span>
+images = images-meanImage; <span class="comment">% Mean deducted original images</span>
+
+<span class="comment">% Using economical svd</span>
+[U,~,~] = svd(images, <span class="string">'econ'</span>);
+eigenVectors = U; <span class="comment">% Take all eigenvectors</span>
+
+<span class="comment">% Face reconstruction of "CroppedYale/yaleB01/yaleB01_P00A+000E+00.pgm"</span>
+<span class="comment">% which is images(:,1)</span>
+
+k = [2, 10, 20, 50, 75, 100, 125, 150, 175]; <span class="comment">% Values of eigenvectors to consider for reconstruction</span>
+reconstructedImages = zeros(192,168,size(k,2)); <span class="comment">% 3D vector to store reconstructed images using each value of "k"</span>
+originalImage = reshape(meanImage + images(:,1),[192 168]); <span class="comment">% originalImage in form of matrix</span>
+
+figure(<span class="string">'Name'</span>, <span class="string">'Face reconstruction of "CroppedYale/yaleB01/yaleB01_P00A+000E+00.pgm"'</span>);
+<span class="keyword">for</span> l=1:size(k,2)
+    keigenvectors = eigenVectors(:,1:k(l)); <span class="comment">% k eigen vectors corresponding to k maximum eigenvalues</span>
+    imgCoeffs = keigenvectors'*(images(:,1)); <span class="comment">% Linear Cofficients for image to be reconstructed if there were "k" eigenvectors</span>
+    img = reshape(meanImage + keigenvectors*imgCoeffs,[192 168]);
+    subplot(2,5,l);
+    imshow(mat2gray(img));
+    colormap <span class="string">gray</span>;
+    colorbar;
+    title(<span class="string">"k = "</span> + sprintf(<span class="string">"%d"</span>,k(l)));
+<span class="keyword">end</span>
+    subplot(2,5,10);
+    imshow(mat2gray(originalImage));
+    colormap <span class="string">gray</span>;
+    colorbar;
+    title(<span class="string">"Original Image"</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_01.png" alt=""> <p>Plotting top 25 eigenfaces</p><pre class="codeinput">    figure(<span class="string">'Name'</span>,<span class="string">'Top 25 Eigenfaces'</span>);
+    top25eigenVectors = eigenVectors(:,1:25);
+
+    <span class="keyword">for</span> i=1:25
+        img = reshape(top25eigenVectors(:,i), [192 168]);
+        subplot(5,5,i);
+        imshow(mat2gray(img));
+        colormap <span class="string">gray</span>;
+        colorbar;
+        title(sprintf(<span class="string">"%d"</span>,i) + <span class="string">"th Eigenface"</span>);
+    <span class="keyword">end</span>
+
+cd(<span class="string">"../code/"</span>);
+toc;
+</pre><pre class="codeoutput">Elapsed time is 45.326791 seconds.
+</pre><img vspace="5" hspace="5" src="myMainScript_02.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Face reconstruction of "CroppedYale/yaleB01/yaleB01_P00A+000E+00.pgm"
+tic;
+close all;
+clear;
+clc;
+
+cd("../data/");
+dimension = 32256; % Dimension of images 192*168
+
+numFolders = 38; % Number of folders to get images from
+mainDir = "CroppedYale/"; % Name of main directory
+identifier = "yaleB"; % Identifier to identify folders which contain useful images
+
+images = zeros(dimension, 0); % All images as column vector of size dimension
+
+% Reading images
+
+countImages = 0; % Number of images read so far in images
+cd(mainDir); % Change to main Directory
+folders = dir(identifier + "*"); % Subdirectories
+
+for i=1:size(folders,1)
+    cd(folders(i).name); % Change directory to a subdirectory
+    files = dir("*.pgm");
+    
+    % Reading images from subdirectory
+    for j=1:size(files,1)
+        img = imread(files(j).name);
+        countImages = countImages + 1;
+        images(:,countImages) = double(img(:));
+    end
+     
+    cd(".."); % Change directory back to main Directory;
+end
+
+cd(".."); % Change directory back to parent
+
+meanImage = mean(images,2); % Mean of original images
+images = images-meanImage; % Mean deducted original images
+
+% Using economical svd
+[U,~,~] = svd(images, 'econ');
+eigenVectors = U; % Take all eigenvectors
+
+% Face reconstruction of "CroppedYale/yaleB01/yaleB01_P00A+000E+00.pgm"
+% which is images(:,1)
+
+k = [2, 10, 20, 50, 75, 100, 125, 150, 175]; % Values of eigenvectors to consider for reconstruction
+reconstructedImages = zeros(192,168,size(k,2)); % 3D vector to store reconstructed images using each value of "k"
+originalImage = reshape(meanImage + images(:,1),[192 168]); % originalImage in form of matrix
+
+figure('Name', 'Face reconstruction of "CroppedYale/yaleB01/yaleB01_P00A+000E+00.pgm"');
+for l=1:size(k,2)
+    keigenvectors = eigenVectors(:,1:k(l)); % k eigen vectors corresponding to k maximum eigenvalues
+    imgCoeffs = keigenvectors'*(images(:,1)); % Linear Cofficients for image to be reconstructed if there were "k" eigenvectors
+    img = reshape(meanImage + keigenvectors*imgCoeffs,[192 168]);
+    subplot(2,5,l);
+    imshow(mat2gray(img));
+    colormap gray;
+    colorbar;
+    title("k = " + sprintf("%d",k(l)));
+end
+    subplot(2,5,10);
+    imshow(mat2gray(originalImage));
+    colormap gray;
+    colorbar;
+    title("Original Image");
+    
+    %%
+    % Plotting top 25 eigenfaces
+    figure('Name','Top 25 Eigenfaces');
+    top25eigenVectors = eigenVectors(:,1:25);
+    
+    for i=1:25
+        img = reshape(top25eigenVectors(:,i), [192 168]);
+        subplot(5,5,i);
+        imshow(mat2gray(img));
+        colormap gray;
+        colorbar;
+        title(sprintf("%d",i) + "th Eigenface");
+    end
+    
+cd("../code/");
+toc;
+##### SOURCE END #####
+--></body></html>

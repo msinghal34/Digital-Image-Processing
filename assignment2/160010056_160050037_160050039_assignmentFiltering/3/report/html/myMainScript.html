@@ -1,0 +1,189 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>myMainScript</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-08-20"><meta name="DC.source" content="myMainScript.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Assignment-II Report for CS663 - Fundamentals of Digital Image Processing</a></li><li><a href="#2">Barbara</a></li><li><a href="#8">Grass</a></li><li><a href="#14">Honey Comb</a></li></ul></div><h2 id="1">Assignment-II Report for CS663 - Fundamentals of Digital Image Processing</h2><p>This script performs patch-based filtering on some input images and automatically publishes the results in a formatted HTML document.</p><p>If images are not displayed side by side, zoom out until they are.</p><h2 id="2">Barbara</h2><img vspace="5" hspace="5" src="myMainScript_01.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_02.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_03.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_04.png" alt=""> <pre class="codeoutput">Optimal value of h for this image is 5.940000 and corresponding value of RMSD is 2.595447
+For 90% of optimal value of h, the value of RMSD is 2.661315
+For 110% of optimal value of h, the value of RMSD is 2.631062
+</pre><h2 id="8">Grass</h2><img vspace="5" hspace="5" src="myMainScript_05.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_06.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_07.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_08.png" alt=""> <pre class="codeoutput">Optimal value of h for this image is 0.053800 and corresponding value of RMSD is 0.030854
+For 90% of optimal value of h, the value of RMSD is 0.033095
+For 110% of optimal value of h, the value of RMSD is 0.032282
+</pre><h2 id="14">Honey Comb</h2><img vspace="5" hspace="5" src="myMainScript_09.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_10.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_11.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_12.png" alt=""> <pre class="codeoutput">Optimal value of h for this image is 0.062100 and corresponding value of RMSD is 0.029606
+For 90% of optimal value of h, the value of RMSD is 0.030467
+For 110% of optimal value of h, the value of RMSD is 0.030103
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Assignment-II Report for CS663 - Fundamentals of Digital Image Processing
+% This script performs patch-based filtering on some input images 
+% and automatically publishes the results in a formatted HTML document. 
+%
+% If images are not displayed side by side, zoom out until they are.
+
+I1 = load('../data/barbara.mat');
+I2 = im2double(imread('../data/grass.png'));
+I3 = im2double(imread('../data/honeyCombReal.png'));
+h1 = 5.94;
+h2 = 0.0538;
+h3 = 0.0621;
+
+%% Barbara
+[k1,noisy1,im1] = myPatchBasedFiltering(I1.imageOrig,h1,1.43);
+r11 = myRMSD(I1.imageOrig,im1);
+%%
+imagesc(I1.imageOrig);
+title('Original');
+colormap gray;
+colorbar;
+%%
+imagesc(noisy1);
+title('Corrupted');
+colormap gray;
+colorbar;
+%%
+imagesc(im1);
+title('Filtered');
+colormap gray;
+colorbar;
+%%
+imagesc(k1);
+title('Gaussian kernel used on patches');
+colormap jet;
+colorbar;
+%%
+fprintf('%s%f%s%f\n','Optimal value of h for this image is ',h1,' and corresponding value of RMSD is ',r11);
+[~,~,im1] = myPatchBasedFiltering(I1.imageOrig,0.9*h1,1.43);
+r12 = myRMSD(I1.imageOrig,im1);
+[~,~,im1] = myPatchBasedFiltering(I1.imageOrig,1.1*h1,1.43);
+r13 = myRMSD(I1.imageOrig,im1);
+fprintf('%s%f\n','For 90% of optimal value of h, the value of RMSD is ',r12);
+fprintf('%s%f\n','For 110% of optimal value of h, the value of RMSD is ',r13);
+
+%% Grass
+[k2,noisy2,im2] = myPatchBasedFiltering(I2,h2,0.91);
+r21 = myRMSD(I2,im2);
+%%
+imagesc(I2);
+title('Original');
+colormap gray;
+colorbar;
+%%
+imagesc(noisy2);
+title('Corrupted');
+colormap gray;
+colorbar;
+%%
+imagesc(im2);
+title('Filtered');
+colormap gray;
+colorbar;
+%%
+imagesc(k2);
+title('Gaussian kernel used on patches');
+colormap jet;
+colorbar;
+%%
+fprintf('%s%f%s%f\n','Optimal value of h for this image is ',h2,' and corresponding value of RMSD is ',r21);
+[~,~,im2] = myPatchBasedFiltering(I2,0.9*h2,0.78);
+r22 = myRMSD(I2,im2);
+[~,~,im2] = myPatchBasedFiltering(I2,1.1*h2,0.78);
+r23 = myRMSD(I2,im2);
+fprintf('%s%f\n','For 90% of optimal value of h, the value of RMSD is ',r22);
+fprintf('%s%f\n','For 110% of optimal value of h, the value of RMSD is ',r23);
+
+%% Honey Comb
+[k3,noisy3,im3] = myPatchBasedFiltering(I3,h3,0.95);
+r31 = myRMSD(I3,im3);
+%%
+imagesc(I3);
+title('Original');
+colormap gray;
+colorbar;
+%%
+imagesc(noisy3);
+title('Corrupted');
+colormap gray;
+colorbar;
+%%
+imagesc(im3);
+title('Filtered');
+colormap gray;
+colorbar;
+%%
+imagesc(k3);
+title('Gaussian kernel used on patches');
+colormap jet;
+colorbar;
+%%
+fprintf('%s%f%s%f\n','Optimal value of h for this image is ',h3,' and corresponding value of RMSD is ',r31);
+[~,~,im3] = myPatchBasedFiltering(I3,0.9*h3,0.95);
+r32 = myRMSD(I3,im3);
+[~,~,im3] = myPatchBasedFiltering(I3,1.1*h3,0.95);
+r33 = myRMSD(I3,im3);
+fprintf('%s%f\n','For 90% of optimal value of h, the value of RMSD is ',r32);
+fprintf('%s%f\n','For 110% of optimal value of h, the value of RMSD is ',r33);
+##### SOURCE END #####
+--></body></html>

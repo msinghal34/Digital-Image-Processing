@@ -1,0 +1,646 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>myMainScript</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-08-07"><meta name="DC.source" content="myMainScript.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Assignment-I Report for CS663 - Fundamentals of Digital Image Processing</a></li><li><a href="#2">Problem 2 Part (a)</a></li><li><a href="#15">Problem 2 Part (b)</a></li><li><a href="#28">Problem 2 Part (c)</a></li><li><a href="#32">Problem 2 Part (d)</a></li><li><a href="#47">Problem 2 Part (e)</a></li></ul></div><h2 id="1">Assignment-I Report for CS663 - Fundamentals of Digital Image Processing</h2><p>This script performs various gray-level transformations on some input images and automatically publishes the results in a formatted HTML document.</p><pre class="codeinput">inputImages = [<span class="string">"barbara.png"</span>,<span class="string">"TEM.png"</span>,<span class="string">"canyon.png"</span>,<span class="string">"retina.png"</span>,<span class="string">"church.png"</span>,<span class="string">"retinaMask.png"</span>,<span class="string">"retinaRef.png"</span>];
+ii1 = im2double(imread(strcat(<span class="string">'../data/'</span>,char(inputImages(1)))));
+ii2 = im2double(imread(strcat(<span class="string">'../data/'</span>,char(inputImages(2)))));
+ii3 = im2double(imread(strcat(<span class="string">'../data/'</span>,char(inputImages(3)))));
+ii4 = im2double(imread(strcat(<span class="string">'../data/'</span>,char(inputImages(4)))));
+ii5 = im2double(imread(strcat(<span class="string">'../data/'</span>,char(inputImages(5)))));
+ii6 = im2double(imread(strcat(<span class="string">'../data/'</span>,char(inputImages(6)))));
+ii7 = im2double(imread(strcat(<span class="string">'../data/'</span>,char(inputImages(7)))));
+ii6(ii6==0) = nan;
+maskedi4 = cat(3,ii4(:,:,1) .* ii6,ii4(:,:,2) .* ii6,ii4(:,:,3) .* ii6);
+maskedi5 = cat(3,ii7(:,:,1) .* ii6,ii7(:,:,2) .* ii6,ii7(:,:,3) .* ii6);
+</pre><h2 id="2">Problem 2 Part (a)</h2><p>Linear contrast stretching using the script <i>myLinearContrastStretching.m</i> Transformation function used for applying linear contrast stretching is:</p><p><img src="myMainScript_eq17182003459843378848.png" alt="$$ T(x) = 255 \times \frac{(x - a)}{(b -a)} $$"></p><p>where <img src="myMainScript_eq05508344529756732484.png" alt="$a$"> is the minimum pixel intensity in the image and <img src="myMainScript_eq02044268985122151499.png" alt="$b$"> is the highest pixel intensity in the image.</p><p>This formula works by bringing the pixel intensities to a range of 0 to 1 and then scales them to 0 - 255 by multiplying by 255.</p><p>The contrast-stretched images and original images are shown below.</p><p>
+<h3>
+barbara.png
+</h3>
+</p><pre class="codeinput">figure;
+im = myLinearContrastStretching(ii1);
+imagesc(im/255);
+title(<span class="string">'contrast-stretched'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_01.png" alt=""> <pre class="codeinput">imagesc(ii1);
+title(<span class="string">'original'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_02.png" alt=""> <p>
+<br>
+<h3>
+TEM.png
+</h3>
+</p><pre class="codeinput">im = myLinearContrastStretching(ii2);
+imagesc(im/255);
+title(<span class="string">'contrast-stretched'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_03.png" alt=""> <pre class="codeinput">imagesc(ii2);
+title(<span class="string">'original'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_04.png" alt=""> <p>
+<br>
+<h3>
+canyon.png
+</h3>
+</p><pre class="codeinput">im = myLinearContrastStretching(ii3);
+title(<span class="string">'contrast-stretched'</span>);
+imshow(im/255);
+</pre><img vspace="5" hspace="5" src="myMainScript_05.png" alt=""> <pre class="codeinput">imshow(ii3);
+title(<span class="string">'original'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_06.png" alt=""> <p>
+<br>
+<h3>
+church.png
+</h3>
+</p><pre class="codeinput">im = myLinearContrastStretching(ii5);
+imshow(im/255);
+title(<span class="string">'contrast-stretched'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_07.png" alt=""> <pre class="codeinput">imshow(ii5);
+title(<span class="string">'original'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_08.png" alt=""> <p>On applying contrast stretching on the image we do not observe any noticeable change in the image. Contrast stretching did not work on this image as the the pixel intensities were already in the range 0-255. So no significant change will be there in the final pixel intensities.</p><h2 id="15">Problem 2 Part (b)</h2><p>Histogram equalization using the script <i>myHE.m</i></p><p>
+<h3>
+barbara.png
+</h3>
+</p><pre class="codeinput">im = myHE(ii1);
+imagesc(im/255);
+title(<span class="string">'histogram equalised'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_09.png" alt=""> <pre class="codeinput">imagesc(ii1);
+title(<span class="string">'original'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_10.png" alt=""> <p>
+<br>
+<h3>
+TEM.png
+</h3>
+</p><pre class="codeinput">im = myHE(ii2);
+imagesc(im/255);
+title(<span class="string">'histogram equalised'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_11.png" alt=""> <pre class="codeinput">imagesc(ii2);
+title(<span class="string">'original'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_12.png" alt=""> <p>
+<br>
+<h3>
+canyon.png
+</h3>
+</p><pre class="codeinput">im = myHE(ii3);
+title(<span class="string">'histogram equalised'</span>);
+imshow(im/255);
+</pre><img vspace="5" hspace="5" src="myMainScript_13.png" alt=""> <pre class="codeinput">imshow(ii3);
+title(<span class="string">'original'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_14.png" alt=""> <p>
+<br>
+<h3>
+church.png
+</h3>
+</p><pre class="codeinput">im = myHE(ii5);
+imshow(im/255);
+title(<span class="string">'histogram equalised'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_15.png" alt=""> <pre class="codeinput">imshow(ii5);
+title(<span class="string">'original'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_16.png" alt=""> <p>On applying Histogram Equalization on the &#8216;church.png&#8217; image, the following was observed.</p><p>The histogram equalized image is more favourable due to the vivid display of colours in the image. As we can see, the original image has a lot of intensities are around zero (dark intensities). i.e. there is an unequal distribution of the intensities towards 0. Histogram equalization solves this by roughly centering the histogram of the intensities. Therefore on applying histogram equalization, the contrast between the various colours can be seen more clearly as the intensities are spread more evenly than before.</p><h2 id="28">Problem 2 Part (c)</h2><p>Histogram matching using the script <i>myHM.m</i></p><p>We can see that on matching the histogram of the input image to that of the reference image, we get an image that is more vivid. This is because just as in the reference image the new histogram matched image has a more even distribution of intensities.</p><pre class="codeinput">imshow(maskedi4);
+title(<span class="string">'original'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_17.png" alt=""> <pre class="codeinput">im = myHM(maskedi4,maskedi5);
+imshow(im);
+title(<span class="string">'histogram matched'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_18.png" alt=""> <pre class="codeinput">im = myHE(maskedi4);
+imshow(im .* ii6/255);
+title(<span class="string">'histogram equalised'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_19.png" alt=""> <h2 id="32">Problem 2 Part (d)</h2><p>Adaptive histogram equalization using the script <i>myAHE.m</i> Window sizes are optimized for individual images.</p><p>
+<h3>
+barbara.png
+</h3>
+</p><pre class="codeinput">imagesc(ii1);
+colormap <span class="string">gray</span>;
+colorbar;
+title(<span class="string">'original'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_20.png" alt=""> <pre class="codeinput">im = myAHE(ii1,210);
+imagesc(im);
+colormap <span class="string">gray</span>;
+title(<span class="string">'tuned window size'</span>);
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_21.png" alt=""> <pre class="codeinput">im = myAHE(ii1,300);
+imagesc(im);
+colormap <span class="string">gray</span>;
+title(<span class="string">'large window size'</span>);
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_22.png" alt=""> <pre class="codeinput">im = myAHE(ii1,40);
+imagesc(im);
+colormap <span class="string">gray</span>;
+title(<span class="string">'small window size'</span>);
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_23.png" alt=""> <p>
+<br>
+<h3>
+TEM.png
+</h3>
+</p><pre class="codeinput">imagesc(ii2);
+colormap <span class="string">gray</span>;
+colorbar;
+title(<span class="string">'original'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_24.png" alt=""> <pre class="codeinput">im = myAHE(ii2,90);
+imagesc(im);
+title(<span class="string">'tuned window size'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_25.png" alt=""> <pre class="codeinput">im = myAHE(ii2,200);
+imagesc(im);
+title(<span class="string">'large window size'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_26.png" alt=""> <pre class="codeinput">im = myAHE(ii2,40);
+imagesc(im);
+title(<span class="string">'small window size'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_27.png" alt=""> <p>
+<br>
+<h3>
+canyon.png
+</h3>
+</p><pre class="codeinput">imshow(ii3);
+title(<span class="string">'original'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_28.png" alt=""> <pre class="codeinput">im = myAHE(ii3,300);
+imshow(im);
+title(<span class="string">'tuned window size'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_29.png" alt=""> <pre class="codeinput">im = myAHE(ii3,500);
+imshow(im);
+title(<span class="string">'large window size'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_30.png" alt=""> <pre class="codeinput">im = myAHE(ii3,40);
+imshow(im);
+title(<span class="string">'small window size'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_31.png" alt=""> <h2 id="47">Problem 2 Part (e)</h2><p>Contrast-Limited Adaptive histogram equalization using the script <i>myCLAHE.m</i> Window sizes and threshold are optimized for individual images.</p><p>
+<h3>
+barbara.png
+</h3>
+</p><pre class="codeinput">imagesc(ii1);
+title(<span class="string">'original'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_32.png" alt=""> <pre class="codeinput">im = myCLAHE(ii1,100,0.1);
+imagesc(im);
+colormap <span class="string">gray</span>;
+title(<span class="string">'tuned parameters'</span>);
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_33.png" alt=""> <pre class="codeinput">im = myCLAHE(ii1,100,0.05);
+imagesc(im);
+title(<span class="string">'halved threshold'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_34.png" alt=""> <p>
+<br>
+<h3>
+TEM.png
+</h3>
+</p><pre class="codeinput">imagesc(ii2);
+title(<span class="string">'original'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_35.png" alt=""> <pre class="codeinput">im = myCLAHE(ii2,50,0.6);
+imagesc(im);
+title(<span class="string">'tuned parameters'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_36.png" alt=""> <pre class="codeinput">im = myCLAHE(ii2,50,0.3);
+imagesc(im);
+title(<span class="string">'halved threshold'</span>);
+colormap <span class="string">gray</span>;
+colorbar;
+</pre><img vspace="5" hspace="5" src="myMainScript_37.png" alt=""> <p>
+<br>
+<h3>
+canyon.png
+</h3>
+</p><pre class="codeinput">imshow(ii3);
+title(<span class="string">'original'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_38.png" alt=""> <pre class="codeinput">im = myCLAHE(ii3,150,0.2);
+imshow(im);
+title(<span class="string">'tuned parameters'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_39.png" alt=""> <pre class="codeinput">im = myCLAHE(ii3,150,0.1);
+imshow(im);
+title(<span class="string">'halved threshold'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_40.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Assignment-I Report for CS663 - Fundamentals of Digital Image Processing
+% This script performs various gray-level transformations on some input images 
+% and automatically publishes the results in a formatted HTML document. 
+
+inputImages = ["barbara.png","TEM.png","canyon.png","retina.png","church.png","retinaMask.png","retinaRef.png"];
+ii1 = im2double(imread(strcat('../data/',char(inputImages(1)))));
+ii2 = im2double(imread(strcat('../data/',char(inputImages(2)))));
+ii3 = im2double(imread(strcat('../data/',char(inputImages(3)))));
+ii4 = im2double(imread(strcat('../data/',char(inputImages(4)))));
+ii5 = im2double(imread(strcat('../data/',char(inputImages(5)))));
+ii6 = im2double(imread(strcat('../data/',char(inputImages(6)))));
+ii7 = im2double(imread(strcat('../data/',char(inputImages(7)))));
+ii6(ii6==0) = nan;
+maskedi4 = cat(3,ii4(:,:,1) .* ii6,ii4(:,:,2) .* ii6,ii4(:,:,3) .* ii6);
+maskedi5 = cat(3,ii7(:,:,1) .* ii6,ii7(:,:,2) .* ii6,ii7(:,:,3) .* ii6);
+%% Problem 2 Part (a)
+% Linear contrast stretching using the script _myLinearContrastStretching.m_
+% Transformation function used for applying linear contrast stretching is:
+%   
+% $$ T(x) = 255 \times \frac{(x - a)}{(b -a)} $$
+%
+% where $a$ is the minimum pixel intensity in the image and $b$ is the
+% highest pixel intensity in the image.
+%
+% This formula works by bringing the pixel intensities to a range of 0 to 1
+% and then scales them to 0 - 255 by multiplying by 255.
+%
+% The contrast-stretched images and original images are shown below.
+%
+% <html>
+% <h3>
+% barbara.png
+% </h3>
+% </html>
+%%
+figure;
+im = myLinearContrastStretching(ii1);
+imagesc(im/255);
+title('contrast-stretched');
+colormap gray;
+colorbar;
+%%
+imagesc(ii1);
+title('original');
+colormap gray;
+colorbar;
+%%
+% <html>
+% <br>
+% <h3>
+% TEM.png
+% </h3>
+% </html>
+%%
+im = myLinearContrastStretching(ii2);
+imagesc(im/255);
+title('contrast-stretched');
+colormap gray;
+colorbar;
+%%
+imagesc(ii2);
+title('original');
+colormap gray;
+colorbar;
+%%
+% <html>
+% <br>
+% <h3>
+% canyon.png
+% </h3>
+% </html>
+%%
+im = myLinearContrastStretching(ii3);
+title('contrast-stretched');
+imshow(im/255);
+%%
+imshow(ii3);
+title('original');
+%%
+% <html>
+% <br>
+% <h3>
+% church.png
+% </h3>
+% </html>
+%%
+im = myLinearContrastStretching(ii5);
+imshow(im/255);
+title('contrast-stretched');
+%%
+imshow(ii5);
+title('original');
+%%
+% On applying contrast stretching on the image we do not observe any 
+% noticeable change in the image. Contrast stretching did not work on 
+% this image as the the pixel intensities were already in the range 0-255.
+% So no significant change will be there in the final pixel intensities.
+%
+
+%% Problem 2 Part (b)
+% Histogram equalization using the script _myHE.m_
+%
+% <html>
+% <h3>
+% barbara.png
+% </h3>
+% </html>
+%%
+im = myHE(ii1);
+imagesc(im/255);
+title('histogram equalised');
+colormap gray;
+colorbar;
+%%
+imagesc(ii1);
+title('original');
+colormap gray;
+colorbar;
+%%
+% <html>
+% <br>
+% <h3>
+% TEM.png
+% </h3>
+% </html>
+%%
+im = myHE(ii2);
+imagesc(im/255);
+title('histogram equalised');
+colormap gray;
+colorbar;
+%%
+imagesc(ii2);
+title('original');
+colormap gray;
+colorbar;
+%%
+% <html>
+% <br>
+% <h3>
+% canyon.png
+% </h3>
+% </html>
+%%
+im = myHE(ii3);
+title('histogram equalised');
+imshow(im/255);
+%%
+imshow(ii3);
+title('original');
+%%
+% <html>
+% <br>
+% <h3>
+% church.png
+% </h3>
+% </html>
+%%
+im = myHE(ii5);
+imshow(im/255);
+title('histogram equalised');
+%%
+imshow(ii5);
+title('original');
+%%
+% On applying Histogram Equalization on the ‘church.png’ image, the
+% following was observed.
+%
+% The histogram equalized image is more favourable due to the vivid display
+% of colours in the image. As we can see, the original image has a lot of 
+% intensities are around zero (dark intensities). i.e. there is an unequal 
+% distribution of the intensities towards 0. Histogram equalization solves 
+% this by roughly centering the histogram of the intensities. Therefore on 
+% applying histogram equalization, the contrast between the various colours
+% can be seen more clearly as the intensities are spread more evenly than 
+% before.
+
+%% Problem 2 Part (c)
+% Histogram matching using the script _myHM.m_
+%
+% We can see that on matching the histogram of the input image to that of
+% the reference image, we get an image that is more vivid.
+% This is because just as in the reference image the new histogram matched
+% image has a more even distribution of intensities.
+%%
+imshow(maskedi4);
+title('original');
+%%
+im = myHM(maskedi4,maskedi5);
+imshow(im);
+title('histogram matched');
+%%
+im = myHE(maskedi4);
+imshow(im .* ii6/255);
+title('histogram equalised');
+%% Problem 2 Part (d)
+% Adaptive histogram equalization using the script _myAHE.m_
+% Window sizes are optimized for individual images.
+%
+% <html>
+% <h3>
+% barbara.png
+% </h3>
+% </html>
+%%
+imagesc(ii1);
+colormap gray;
+colorbar;
+title('original');
+%%
+im = myAHE(ii1,210);
+imagesc(im);
+colormap gray;
+title('tuned window size');
+colorbar;
+%%
+im = myAHE(ii1,300);
+imagesc(im);
+colormap gray;
+title('large window size');
+colorbar;
+%%
+im = myAHE(ii1,40);
+imagesc(im);
+colormap gray;
+title('small window size');
+colorbar;
+%%
+% <html>
+% <br>
+% <h3>
+% TEM.png
+% </h3>
+% </html>
+%%
+imagesc(ii2);
+colormap gray;
+colorbar;
+title('original');
+%%
+im = myAHE(ii2,90);
+imagesc(im);
+title('tuned window size');
+colormap gray;
+colorbar;
+%%
+im = myAHE(ii2,200);
+imagesc(im);
+title('large window size');
+colormap gray;
+colorbar;
+%%
+im = myAHE(ii2,40);
+imagesc(im);
+title('small window size');
+colormap gray;
+colorbar;
+%%
+% <html>
+% <br>
+% <h3>
+% canyon.png
+% </h3>
+% </html>
+%%
+imshow(ii3);
+title('original');
+%%
+im = myAHE(ii3,300);
+imshow(im);
+title('tuned window size');
+%%
+im = myAHE(ii3,500);
+imshow(im);
+title('large window size');
+%%
+im = myAHE(ii3,40);
+imshow(im);
+title('small window size');
+%% Problem 2 Part (e)
+% Contrast-Limited Adaptive histogram equalization using the script _myCLAHE.m_
+% Window sizes and threshold are optimized for individual images.
+%
+% <html>
+% <h3>
+% barbara.png
+% </h3>
+% </html>
+%%
+imagesc(ii1);
+title('original');
+colormap gray;
+colorbar;
+%%
+im = myCLAHE(ii1,100,0.1);
+imagesc(im);
+colormap gray;
+title('tuned parameters');
+colorbar;
+%%
+im = myCLAHE(ii1,100,0.05);
+imagesc(im);
+title('halved threshold');
+colormap gray;
+colorbar;
+%%
+% <html>
+% <br>
+% <h3>
+% TEM.png
+% </h3>
+% </html>
+%%
+imagesc(ii2);
+title('original');
+colormap gray;
+colorbar;
+%%
+im = myCLAHE(ii2,50,0.6);
+imagesc(im);
+title('tuned parameters');
+colormap gray;
+colorbar;
+%%
+im = myCLAHE(ii2,50,0.3);
+imagesc(im);
+title('halved threshold');
+colormap gray;
+colorbar;
+%%
+% <html>
+% <br>
+% <h3>
+% canyon.png
+% </h3>
+% </html>
+%%
+imshow(ii3);
+title('original');
+%%
+im = myCLAHE(ii3,150,0.2);
+imshow(im);
+title('tuned parameters');
+%%
+im = myCLAHE(ii3,150,0.1);
+imshow(im);
+title('halved threshold');
+##### SOURCE END #####
+--></body></html>

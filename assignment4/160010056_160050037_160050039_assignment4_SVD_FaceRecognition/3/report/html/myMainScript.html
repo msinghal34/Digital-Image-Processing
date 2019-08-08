@@ -1,0 +1,243 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Q3</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-10-15"><meta name="DC.source" content="myMainScript.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Q3</h1><!--introduction--><!--/introduction--><p>What will happen if you test your system on images of people which were not part of the training set? (i.e. the last 8 people from the ORL database)?</p><p>Ans: They will be identified as some person from 1 - 32 (according to whoever has the minimum squared difference.)</p><p>What mechanism will you use to report the fact that there is no matching identity? Work this out carefully and explain briefly in your report.</p><p>Ans: We will use a threshold over squaredDiff. If the minimum difference is bigger than threshold then we will treat it as if there is no matching identity. But it will create some falseNegatives as well. So, we should optimize the value of threshold to minimize both falseNegatives &amp; falsePositives</p><p>How many false positives/negatives did you get?</p><p>Number of falseNegatives = 26</p><p>Number of falsePositives = 7</p><pre class="codeinput">tic;
+clear;
+clc;
+
+cd(<span class="string">"../data/"</span>);
+dimension = 10304; <span class="comment">% Dimension of images 112*92</span>
+
+numFolders = 32; <span class="comment">% Number of folders to get images from</span>
+mainDir = <span class="string">"att_faces/"</span>; <span class="comment">% Name of main directory</span>
+
+num1 = 6; <span class="comment">% Number of images for training in each directory</span>
+num2 = 4; <span class="comment">% Number of images for testing in each directory</span>
+
+originalImages = zeros(dimension, numFolders*num1); <span class="comment">% Original Images to be stored in a matrix of size dimensions X numFolders*num1</span>
+testingImages = zeros(dimension, 40*num2); <span class="comment">% Testing Images to be stored in a matrix of size dimensions X numFolders*num2</span>
+
+<span class="comment">% Reading images</span>
+
+cd(mainDir); <span class="comment">% Change Directory</span>
+<span class="keyword">for</span> i=1:numFolders
+    files = dir(sprintf(<span class="string">"s%d"</span>,i) + <span class="string">"/*.pgm"</span>);
+    <span class="keyword">for</span> j=1:num1
+        img = imread(convertStringsToChars(sprintf(<span class="string">"s%d/"</span>,i) + convertCharsToStrings(files(j).name)));
+        originalImages(:,(i-1)*num1+j) = double(img(:));
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> j=num1+1:num1+num2
+        img = imread(convertStringsToChars(sprintf(<span class="string">"s%d/"</span>,i) + convertCharsToStrings(files(j).name)));
+        testingImages(:,(i-1)*num2+j-num1) = double(img(:));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="keyword">for</span> i=33:40
+    files = dir(sprintf(<span class="string">"s%d"</span>,i) + <span class="string">"/*.pgm"</span>);
+    <span class="keyword">for</span> j=num1+1:num1+num2
+        img = imread(convertStringsToChars(sprintf(<span class="string">"s%d/"</span>,i) + convertCharsToStrings(files(j).name)));
+        testingImages(:,(i-1)*num2+j-num1) = double(img(:));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+cd(<span class="string">".."</span>); <span class="comment">% Change directory back to parent</span>
+
+originalMean = mean(originalImages,2); <span class="comment">% Mean of original images</span>
+originalImages = originalImages-originalMean; <span class="comment">% Mean deducted original images</span>
+
+<span class="comment">% Using economical svd</span>
+[U,~,~] = svd(originalImages, <span class="string">'econ'</span>);
+
+eigenVectors = U; <span class="comment">% Eigenvectors</span>
+
+k = 170; <span class="comment">% Values of eigenvectors to consider</span>
+
+falsePositives = 0;
+falseNegatives = 0;
+threshold = 2.2e+06;
+
+<span class="comment">%Testing Phase</span>
+testingImages = testingImages - originalMean; <span class="comment">% Subtract originalMean from testing Images</span>
+keigenvectors = eigenVectors(:,1:k); <span class="comment">% k eigen vectors corresponding to k maximum eigenvalues</span>
+originalImgCoeffs = keigenvectors'*originalImages; <span class="comment">% Linear Cofficients for original Images</span>
+testingImgCoeffs = keigenvectors'*testingImages; <span class="comment">% Linear Cofficients for all testing Images</span>
+
+<span class="keyword">for</span> i=1:size(testingImgCoeffs,2)
+    squaredDiff = (originalImgCoeffs-testingImgCoeffs(:,i)).^2; <span class="comment">% Squared difference between linear coefficients</span>
+    [value, index] = min(sum(squaredDiff)); <span class="comment">% Minimum Squared Difference</span>
+    <span class="keyword">if</span> (value &lt;= threshold)
+        <span class="keyword">if</span> (i &gt; 32)
+            falsePositives = falsePositives + 1;
+        <span class="keyword">end</span>
+    <span class="keyword">elseif</span> (value &gt; threshold)
+        <span class="keyword">if</span> (i &lt;= 32)
+            falseNegatives = falseNegatives + 1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+cd(<span class="string">"../code/"</span>);
+toc;
+</pre><pre class="codeoutput">Elapsed time is 0.511894 seconds.
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Q3
+
+%% 
+% What will happen if you test your system on images of people which were not part of the training set? (i.e. the last 8 people from the ORL database)?
+%
+% Ans: They will be identified as some person from 1 - 32 (according to whoever has the minimum squared difference.)
+%
+%
+% What mechanism will you use to report the fact that there is no matching identity? Work this out carefully and explain briefly in your report.
+%
+% Ans: We will use a threshold over squaredDiff. If the minimum difference is bigger than threshold then we will treat it as if there is no matching
+% identity. But it will create some falseNegatives as well. So, we should optimize the value of threshold to minimize both falseNegatives & falsePositives
+%
+%
+% How many false positives/negatives did you get?
+%
+% Number of falseNegatives = 26
+%
+% Number of falsePositives = 7
+
+tic;
+clear;
+clc;
+
+cd("../data/");
+dimension = 10304; % Dimension of images 112*92
+
+numFolders = 32; % Number of folders to get images from
+mainDir = "att_faces/"; % Name of main directory
+
+num1 = 6; % Number of images for training in each directory
+num2 = 4; % Number of images for testing in each directory
+
+originalImages = zeros(dimension, numFolders*num1); % Original Images to be stored in a matrix of size dimensions X numFolders*num1
+testingImages = zeros(dimension, 40*num2); % Testing Images to be stored in a matrix of size dimensions X numFolders*num2
+
+% Reading images
+
+cd(mainDir); % Change Directory
+for i=1:numFolders
+    files = dir(sprintf("s%d",i) + "/*.pgm");
+    for j=1:num1
+        img = imread(convertStringsToChars(sprintf("s%d/",i) + convertCharsToStrings(files(j).name)));
+        originalImages(:,(i-1)*num1+j) = double(img(:));
+    end
+    for j=num1+1:num1+num2
+        img = imread(convertStringsToChars(sprintf("s%d/",i) + convertCharsToStrings(files(j).name)));
+        testingImages(:,(i-1)*num2+j-num1) = double(img(:));
+    end
+end
+for i=33:40
+    files = dir(sprintf("s%d",i) + "/*.pgm");
+    for j=num1+1:num1+num2
+        img = imread(convertStringsToChars(sprintf("s%d/",i) + convertCharsToStrings(files(j).name)));
+        testingImages(:,(i-1)*num2+j-num1) = double(img(:));
+    end
+end
+
+cd(".."); % Change directory back to parent
+
+originalMean = mean(originalImages,2); % Mean of original images
+originalImages = originalImages-originalMean; % Mean deducted original images
+
+% Using economical svd
+[U,~,~] = svd(originalImages, 'econ');
+
+eigenVectors = U; % Eigenvectors
+
+k = 170; % Values of eigenvectors to consider
+
+falsePositives = 0;
+falseNegatives = 0;
+threshold = 2.2e+06;
+
+%Testing Phase
+testingImages = testingImages - originalMean; % Subtract originalMean from testing Images
+keigenvectors = eigenVectors(:,1:k); % k eigen vectors corresponding to k maximum eigenvalues
+originalImgCoeffs = keigenvectors'*originalImages; % Linear Cofficients for original Images
+testingImgCoeffs = keigenvectors'*testingImages; % Linear Cofficients for all testing Images
+
+for i=1:size(testingImgCoeffs,2)
+    squaredDiff = (originalImgCoeffs-testingImgCoeffs(:,i)).^2; % Squared difference between linear coefficients
+    [value, index] = min(sum(squaredDiff)); % Minimum Squared Difference
+    if (value <= threshold)
+        if (i > 32)
+            falsePositives = falsePositives + 1;
+        end
+    elseif (value > threshold)
+        if (i <= 32)
+            falseNegatives = falseNegatives + 1;                
+        end
+    end
+end
+cd("../code/");
+toc;
+##### SOURCE END #####
+--></body></html>
